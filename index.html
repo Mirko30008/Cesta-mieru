@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Cesta Mieru</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link rel="icon" type="image/png" href="Logo mapa.png">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    touch-action: pan-x pan-y;
+}
+
+#map {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+}
+
+/* HORNÁ LIŠTA */
+#topBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: #FFD700;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    box-sizing: border-box;
+    z-index: 10000;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#topBar .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px; /* výška hornej lišty */
+    margin-right: 10px;
+    margin-left: -27px;
+}
+
+#topBar .logo img {
+    height: 65px;
+    width: auto;
+    border-radius: 10px;
+}
+
+#topBar .title {
+    font-size: 20px;
+}
+
+#topBar.dimmed {
+    background: #403600; /* tmavšie žltá, podobná menu */
+    transition: background 0.3s ease;
+}
+
+#topBar.dimmed .title,
+#topBar.dimmed .logo img,
+#topBar.dimmed #menuButton {
+    filter: brightness(0.6); /* stmavenie textu, loga a hamburgeru */
+    transition: filter 0.3s ease;
+}
+
+/* HAMBURGER */
+#menuButton {
+    font-size: 28px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* VYSÚVACIE MENU */
+#sideMenu {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 300px;
+    height: 100vh;
+    background: #FFD700;
+    padding: 100px 20px 20px 20px;
+    box-sizing: border-box;
+    transition: right 0.3s ease;
+    z-index: 9998;
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow-y: auto;   /* umožní scroll */
+    overflow-x: hidden; /* zabráni horizontálnemu scrollu */
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;  /* Internet Explorer */
+    scrollbar-width: none;     /* Firefox */
+}
+
+#sideMenu::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari */
+}
+
+#sideMenu.open {
+    right: 0;
+}
+
+.menuItem {
+    color: white;
+    font-size: 18px;
+    margin: 15px 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: Arial, sans-serif;
+}
+
+.menuItem:hover {
+    opacity: 0.7;
+}
+
+.menuItem {
+    user-select: none; /* zakáže výber textu */
+}
+
+.activeItem {
+    color: #00aa00 !important;
+    font-weight: bold;
+}
+
+/* LOGO V MENU */
+#sideMenu .menuLogo {
+    width: 245px;
+    height: 245px;
+    background: #FFD700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px; 
+    margin: 20px auto;
+    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#sideMenu .menuLogo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+#infoBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* GPS tlačidlo */
+#locateBtn {
+    position: fixed;
+    top: 90px;
+    left: 15px;
+    width: 50px;
+    height: 50px;
+    background: #FFD700;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1200;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: 0.2s ease;
+}
+
+#locateBtn:hover {
+    background: #E6C200;
+    transform: scale(1.05);
+}
+
+.content {
+  background: white;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  animation: fadeIn 0.3s ease;
+}
+
+.content img {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.content audio {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.close {
+  cursor: pointer;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: scale(0.9);}
+  to {opacity: 1; transform: scale(1);}
+}
+
+/* ================= GPS PULZUJÚCA BODKA ================= */
+
+.pulseDot {
+    width: 18px;
+    height: 18px;
+    background: #1E90FF;
+    border-radius: 50%;
+    position: relative;
+}
+
+.pulseDot::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: rgba(30,144,255,0.4);
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* text presnosti */
+#accuracyText {
+    position: fixed;
+    top: 145px;
+    left: 15px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: none;
+    z-index: 1200;
+}
+
+#logoOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+}
+
+#logoOverlay img {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 20px;
+}
+
+/* krížik */
+#closeLogo {
+    position: absolute;
+    top: 25px;
+    right: 35px;
+    font-size: 32px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+#closeLogo:hover {
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+#galleryOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999; /* nad mapou a všetkým */
+}
+
+.galleryContent {
+    position: relative; /* veľmi dôležité, šípky budú relatívne k containeru */
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.9);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+
+.galleryContent img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+}
+
+/* ŠÍPKY */
+#galleryImage {
+    max-width: 100%;
+    max-height: 100%;
+    z-index: 1; /* obrázok je pod šípkami */
+}
+
+#prevImage, #nextImage {
+    position: absolute; /* nad obrázkom */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 50px;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    z-index: 2; /* vyššie ako obrázok */
+    background: rgba(0,0,0,0.3); /* mierny polopriehľadný podklad */
+    padding: 10px;
+    border-radius: 50%;
+}
+
+#prevImage { left: -30px; }   /* vľavo od obrázka */
+#nextImage { right: -30px; }  /* vpravo od obrázka */
+
+/* KRÍŽIK PRE GALÉRIU */
+#closeGallery {
+    position: absolute; /* musí byť absolute */
+    top: 20px;
+    right: 35px;
+    font-size: 48px;
+    color: white;       /* aby bol viditeľný */
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 10001;     /* nad všetkým */
+    background: none;
+    padding: 0;
+    user-select: none;
+    transition: 0.2s;
+}
+
+#closeGallery:hover {
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    #prevImage, #nextImage {
+        font-size: 60px;
+        left: -20px;
+        right: -20px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Horný panel -->
+<div id="topBar">
+    <div class="logo" id="topLogo">
+        <img src="Logo mapa.png" alt="logoBox">
+    </div>
+    <div class="title">Cesta Mieru</div>
+    <div id="menuButton">☰</div>
+</div>
+
+<div id="sideMenu">
+    <h2>Cyklotrasa</h2>
+    <div class="menuItem" onclick="showRouteDescription()">Popis cyklotrasy</div>
+    <h2>Iné zastávky</h2>
+    <div class="menuItem" id="foodBtn" onclick="toggleFood()">Občerstvenie</div>
+    <div class="menuItem" id="springBtn" onclick="toggleSprings()">Minerálne pramene</div>
+    <h2>Ďalšie informácie</h2>
+    <div class="menuItem" id="aboutUs">O nás</div>
+    <div class="menuItem" id="galleryBtn">Galéria</div>
+
+    <!-- Logo ako posledné pred textom -->
+    <div class="menuLogo" id="menuLogo">
+        <img src="Logo mapa.png" alt="Logo">
+    </div>
+</div>
+
+<div id="map"></div>
+    
+<!-- GPS TLAČIDLO -->
+<div id="locateBtn">
+    <svg width="22" height="22" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" stroke="white" stroke-width="2" fill="none"/>
+        <circle cx="12" cy="12" r="4" stroke="white" stroke-width="2" fill="none"/>
+        <circle cx="12" cy="12" r="1.5" fill="white"/>
+    </svg>
+</div>
+
+<div id="accuracyText"></div>
+
+<div id="infoBox">
+  <div class="content">
+      <span onclick="closeBox()" class="close">✖</span>
+      <div id="infoContent"></div>
+  </div>
+</div>
+
+<div id="logoOverlay">
+    <span id="closeLogo">✖</span>
+    <img src="Logo mapa.png" alt="Veľké logo">
+</div>
+
+<!-- GALÉRIA -->
+<div id="galleryOverlay">
+  <div class="galleryContent">
+      <span id="prevImage">&#10094;</span> <!-- šípka vľavo -->
+      <img id="galleryImage" src="" alt="Galéria">
+      <span id="nextImage">&#10095;</span> <!-- šípka vpravo -->
+      <span id="closeGallery">✖</span>
+  </div>
+</div>
+
+<script>
+
+
+// MENU TOGGLE
+document.getElementById("menuButton").addEventListener("click", function() {
+    document.getElementById("sideMenu").classList.toggle("open");
+});
+
+// --- O NÁS ---
+document.getElementById("aboutUs").addEventListener("click", function() {
+    openBox(`
+        <h2>O nás</h2>
+        <p>I am steve</p>
+        <ul>
+            <li>asd</li>
+            <li>sffr</li>
+            <li>kkk</li>
+        </ul>
+    `);
+});
+
+// POPIS CYKLOTRASY
+function showRouteDescription() {
+    openBox(`
+        <h2>Popis cyklotrasy</h2>
+        <p>
+        Tu vlož svoj vlastný popis cyklotrasy.
+        Môžeš opísať dĺžku, náročnosť a zaujímavosti.
+        </p>
+    `);
+}
+
+
+// SKUPINY MARKEROV
+var foodMarkers = [];
+var springMarkers = [];
+
+
+// OBČERSTVENIE
+function toggleFood() {
+    var btn = document.getElementById("foodBtn");
+
+    if (foodMarkers.length === 0) {
+
+        var m1 = L.marker([48.68, 19.12], {icon: greenIcon}).addTo(map);
+        m1.bindPopup("Občerstvenie 1");
+        var m2 = L.marker([48.69, 19.14], {icon: greenIcon}).addTo(map);
+        m2.bindPopup("Občerstvenie 2");
+
+        foodMarkers.push(m1, m2);
+        btn.classList.add("activeItem");
+
+    } else {
+        foodMarkers.forEach(m => {
+            map.removeLayer(m);
+        });
+        foodMarkers = [];
+        btn.classList.remove("activeItem");
+    }
+}
+
+// MINERÁLNE PRAMENE
+function toggleSprings() {
+    var btn = document.getElementById("springBtn");
+
+    if (springMarkers.length === 0) {
+
+        var s1 = L.marker([48.67, 19.13], {icon: blueIcon}).addTo(map);
+        s1.bindPopup("Minerálny prameň 1");
+        var s2 = L.marker([48.66, 19.15], {icon: blueIcon}).addTo(map);
+        s2.bindPopup("Minerálny prameň 2");
+
+        springMarkers.push(s1, s2);
+        btn.classList.add("activeItem");
+
+    } else {
+        springMarkers.forEach(s => {
+            map.removeLayer(s);
+        });
+        springMarkers = [];
+        btn.classList.remove("activeItem");
+    }
+}
+
+// otvorenie loga
+function openLogo() {
+    document.getElementById("logoOverlay").style.display = "flex";
+}
+
+// zatvorenie klikom mimo
+var overlay = document.getElementById("logoOverlay");
+var closeBtn = document.getElementById("closeLogo");
+
+closeBtn.addEventListener("click", function() {
+    overlay.style.display = "none";
+});
+
+overlay.addEventListener("click", function(e) {
+    if (e.target === overlay) {
+        overlay.style.display = "none";
+    }
+});
+
+// klik na logo hore
+document.getElementById("topLogo").addEventListener("click", openLogo);
+
+// klik na logo v menu
+document.getElementById("menuLogo").addEventListener("click", openLogo);
+
+// hranice
+var southWest = L.latLng(48.55, 19.00);
+var northEast = L.latLng(48.80, 19.30);
+var slovakiaBounds = [
+    [47.70, 16.80],  // juhozápad
+    [49.65, 22.60]   // severovýchod
+];
+
+var badin = [48.687253771772355, 19.14468995239919];
+
+var map = L.map('map', {
+    center: badin,
+    zoom: 12,
+    maxBounds: slovakiaBounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 6,
+    maxZoom: 18,   // ← TU CHÝBALA ČIARKA
+    zoomControl: false,
+    tap: false,
+    touchZoom: true,
+    doubleClickZoom: true,
+    scrollWheelZoom: true
+});
+
+
+// farebné markery 
+
+// ČERVENÁ – štandardné markery
+var redIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+// ZELENÁ – občerstvenie
+var greenIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+// MODRÁ – minerálne pramene
+var blueIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+// --- hybridná mapa (satelit + popisy) ---
+var satellite = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {
+    attribution: 'Tiles © Esri',
+    maxZoom: 20,
+    maxNativeZoom: 18
+  }
+);
+
+// Zatvor všetky popupy, keď sa začne posúvať mapa
+map.on('movestart', function() {
+    map.closePopup();
+});
+
+// Zatvor popupy aj keď klikneš inde
+map.on('click', function() {
+    map.closePopup();
+    document.getElementById("sideMenu").classList.remove("open");
+});
+
+var labels = L.tileLayer(
+  'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+  { attribution: 'Labels © Esri', noWrap: true, pane: 'overlayPane' }
+);
+
+satellite.addTo(map);
+labels.addTo(map);
+
+L.control.scale({
+    position: 'bottomleft'
+}).addTo(map);
+
+// GPS bod
+var tracking = false;       // sleduje či je GPS zapnuté
+var initialCenter = true;   // prvé nastavenie mapy na polohu
+
+document.getElementById("locateBtn").addEventListener("click", function() {
+
+    if (typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function") {
+
+        DeviceOrientationEvent.requestPermission()
+            .then(function(response) {
+                if (response === "granted") {
+                    console.log("Kompas povolený");
+                }
+            })
+            .catch(console.error);
+    }
+
+    if (!tracking) {
+        tracking = true;
+
+        map.locate({
+            watch: true,
+            enableHighAccuracy: true,
+            maxZoom: 16
+        });
+
+    } else {
+        tracking = false;
+        map.stopLocate();
+
+        if (window.userMarker) {
+            map.removeLayer(window.userMarker);
+            window.userMarker = null;
+        }
+
+        document.getElementById("accuracyText").style.display = "none";
+        initialCenter = true; // reset pre ďalšie zapnutie GPS
+    }
+});
+
+map.on('locationfound', function(e) {
+
+    var pulseIcon = L.divIcon({
+        className: '',
+        html: '<div class="pulseDot"></div>',
+        iconSize: [18, 18],
+        iconAnchor: [9, 9]
+    });
+
+    if (window.userMarker) {
+        window.userMarker.setLatLng(e.latlng);  // posúvanie markeru
+    } else {
+        window.userMarker = L.marker(e.latlng, {icon: pulseIcon}).addTo(map);
+    }
+
+    // prvé nastavenie mapy na polohu
+    if (initialCenter) {
+        map.setView(e.latlng, 16);  // iba pri zapnutí GPS
+        initialCenter = false;
+    }
+
+    // aktualizuj presnosť
+    var acc = Math.round(e.accuracy);
+    var text = document.getElementById("accuracyText");
+    text.innerHTML = " ± " + acc + " m";
+    text.style.display = "block";
+});
+
+map.on('locationerror', function() {
+    document.getElementById("accuracyText").style.display = "none";
+    alert("Poloha nebola povolená.");
+});
+
+
+// Pridáme zatváranie menu klikom na mapu
+map.on('click', function() {
+    document.getElementById("sideMenu").classList.remove("open");
+});
+
+map.on('movestart', function() {
+    document.getElementById("sideMenu").classList.remove("open");
+});
+
+// --- funkcie pre veľké okno ---
+function openBox(htmlContent) {
+    document.getElementById("infoContent").innerHTML = htmlContent;
+    document.getElementById("infoBox").style.display = "flex";
+    document.getElementById("topBar").classList.add("dimmed"); // stmavenie horného panelu
+}
+
+function closeBox() {
+    document.getElementById("infoBox").style.display = "none";
+    document.getElementById("topBar").classList.remove("dimmed"); // návrat späť
+}
+
+// klik mimo
+document.getElementById("infoBox").addEventListener("click", function(e) {
+    if (e.target.id === "infoBox") closeBox();
+});
+
+var galleryImages = [
+    'Logo mapa.png',
+    'img2.jpg',
+    'img3.jpg'
+];
+
+var currentIndex = 0;
+var galleryOverlay = document.getElementById('galleryOverlay');
+var galleryImg = document.getElementById('galleryImage');
+var closeGallery = document.getElementById('closeGallery');
+var prevBtn = document.getElementById('prevImage');
+var nextBtn = document.getElementById('nextImage');
+
+document.getElementById('galleryBtn').addEventListener('click', function() {
+    currentIndex = 0;
+    galleryImg.src = galleryImages[currentIndex];
+    galleryOverlay.style.display = 'flex';
+});
+
+closeGallery.addEventListener('click', function() {
+    galleryOverlay.style.display = 'none';
+});
+
+galleryOverlay.addEventListener('click', function(e) {
+    if (e.target === galleryOverlay) {
+        galleryOverlay.style.display = 'none';
+    }
+});
+
+prevBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+    galleryImg.src = galleryImages[currentIndex];
+});
+
+nextBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % galleryImages.length;
+    galleryImg.src = galleryImages[currentIndex];
+});
+
+window.addEventListener("resize", function() {
+    map.invalidateSize();
+});
+
+// --- žltá trasa ---
+var newRoute = [
+    [48.73510848507496, 19.14959797149057],
+    [48.735000146387165, 19.149125079453967],
+    [48.73468557960344, 19.149179515202878],
+    [48.73447726206441, 19.14884812392186],
+    [48.734518096206386, 19.14877474519677],
+    [48.73432765764345, 19.148278434388814],
+    [48.73381635724308, 19.1467307553345],
+    [48.733424189339004, 19.14572890770594],
+    [48.732535624104365, 19.142721157196384],
+    [48.73195348217708, 19.141112366719742],
+    [48.731941068980646, 19.140715432533607],
+    [48.73224891707092, 19.14038424719647],
+    [48.731951968749144, 19.139697232446842],
+    [48.73160426331632, 19.13883611767326],
+    [48.73157516943549, 19.13847373048259],
+    [48.731619398207215, 19.13838793909823],
+    [48.7316194223746, 19.13824313192628],
+    [48.73167600457769, 19.137956657747335],
+    [48.73173715169769, 19.137551900011637],
+    [48.73174192780079, 19.13682929077153],
+    [48.731768816178054, 19.136012696885743],
+    [48.73189003913288, 19.135753468605607],
+    [48.73221905740885, 19.13528136763276],
+    [48.73296674535596, 19.13422448399626],
+    [48.733833593266766, 19.13327226201572],
+    [48.73413999523991, 19.13259096137926],
+    [48.73433452642059, 19.13183320820052],
+    [48.734315914148524, 19.13159024756961],
+    [48.73421156845777, 19.13149775271971],
+    [48.7338947869075, 19.131267848866575],
+    [48.73373628978747, 19.130995445837065],
+    [48.733556387322444, 19.13054981557725],
+    [48.73335057649692, 19.130400286530826],
+    [48.73406691987403, 19.128157926015106],
+    [48.73407323122403, 19.12739718210734],
+    [48.734021688509806, 19.126527988296672],
+    [48.734094269052996, 19.12620901807629],
+    [48.73397750899892, 19.125957031624658],
+    [48.734193146724564, 19.125827848696925],
+    [48.73428466099513, 19.12566836358964],
+    [48.734281820931336, 19.12532475997878],
+    [48.73414101998914, 19.12527570902008],
+    [48.73361108923278, 19.125574138641525],
+    [48.733019646253446, 19.125650545854295],
+    [48.73271889359201, 19.125521830318583],
+    [48.7317833183419, 19.124966237996375],
+    [48.73103524047339, 19.12457163375949],
+    [48.730366645027374, 19.124343047756028],
+    [48.72993854831468, 19.12370200261108],
+    [48.729303431236175, 19.12274086903627],
+    [48.72834714898179, 19.121275859066657],
+    [48.72796986101992, 19.12096221343256],
+    [48.727550108505824, 19.120762095780616],
+    [48.72747583947282, 19.121298169243335],
+    [48.72689615633357, 19.121793850733948],
+    [48.72646872310305, 19.121728090925902],
+    [48.72574444607649, 19.121645530700885],
+    [48.7251622362788, 19.121454470118962],
+    [48.724190465762284, 19.120741551766407],
+    [48.72317962647444, 19.11997119139114],
+    [48.7228747819001, 19.11978462142216],
+    [48.72265807284689, 19.119829301209467],
+    [48.72247019143541, 19.12010337935763],
+    [48.72239312884915, 19.120506751054837],
+    [48.722673957993706, 19.121945311131054],
+    [48.72289942517152, 19.123552931832442],
+    [48.72295336826733, 19.124755615757486],
+    [48.72283440944314, 19.125164700631146],
+    [48.722440982847175, 19.1256190149906],
+    [48.72269077286893, 19.126184191122903],
+    [48.72324097627944, 19.127659073189612],
+    [48.72359297877907, 19.129241221301594],
+    [48.723801857029635, 19.130372472734486],
+    [48.7238437197965, 19.131128635340154],
+    [48.72378060333014, 19.13159105787353],
+    [48.72343023708233, 19.13179898264415],
+    [48.72300646261152, 19.131736689354028],
+    [48.72262779864919, 19.131870803398524],
+    [48.721456393659466, 19.132594991448386],
+    [48.720683889453724, 19.13278235378626],
+    [48.71983767048338, 19.132604131167263],
+    [48.7185618376772, 19.13220184683691],
+    [48.71815985409915, 19.13217187317562],
+    [48.7179904607725, 19.132098573539256],
+    [48.717891875426126, 19.131904006325023],
+    [48.71786709403965, 19.130503775329494],
+    [48.717739100057926, 19.130139996179967],
+    [48.716857381270685, 19.129163989576433],
+    [48.71628054655257, 19.12885062732289],
+    [48.716031605, 19.128659013302908],
+    [48.71579777391663, 19.128431643293627],
+    [48.7152416790554, 19.1281247886396],
+    [48.71460270393754, 19.128063353199018],
+    [48.71426734803515, 19.127943675389155],
+    [48.7139725990726, 19.127698239420468],
+    [48.713602067488075, 19.127200681562744],
+    [48.7134643419805, 19.126367982977946],
+    [48.71322880917907, 19.125423892608303],
+    [48.7131683368725, 19.124690111948357],
+    [48.71317183143635, 19.124090869377714],
+    [48.7131012199327, 19.123803904059606],
+    [48.71297294169827, 19.12356028793094],
+    [48.7124189487867, 19.12302579373552],
+    [48.71215726991688, 19.12314405796959],
+    [48.71183390243437, 19.123296349735057],
+    [48.71166862485231, 19.123331982621952],
+    [48.71150584864934, 19.1234499630891],
+    [48.71146119336029, 19.12360091823504],
+    [48.711158478197184, 19.123711542144527],
+    [48.71087526529917, 19.123733032814595],
+    [48.70908165420817, 19.123545346459792],
+    [48.70795509441973, 19.123434317484772],
+    [48.70745075435383, 19.123438944719847],
+    [48.70728766809382, 19.123351386263256],
+    [48.706697941135, 19.12280197363737],
+    [48.70651123678102, 19.1225941317285],
+    [48.70637978245811, 19.122531083382615],
+    [48.70625014588656, 19.122587643032194],
+    [48.70604897222622, 19.1228717250761],
+    [48.70592327539709, 19.123282820320654],
+    [48.705923697239065, 19.12342631054938],
+    [48.705984879146705, 19.123641228640135],
+    [48.7062332764921, 19.123970857044604],
+    [48.706272858273, 19.124090623059573],
+    [48.70627328506202, 19.124183759741054],
+    [48.70616436193562, 19.12460559098473],
+    [48.70616881722425, 19.124746415414517],
+    [48.70623707360068, 19.124822559099538],
+    [48.706464911323145, 19.124953118442193],
+    [48.70674749370973, 19.125010113308047],
+    [48.70681856167706, 19.12504231865437],
+    [48.70701293521708, 19.12526315718979],
+    [48.70715591558347, 19.125463293064737],
+    [48.70725768341562, 19.125526981623988],
+    [48.70728759381508, 19.125575209981985],
+    [48.707319264357714, 19.125871293133446],
+    [48.70730599815837, 19.125940449059172],
+    [48.70727677418285, 19.125986020619536],
+    [48.70703066628793, 19.126074545415662],
+    [48.70677209864364, 19.126108958824183],
+    [48.70662992639797, 19.126075259337178],
+    [48.706229920794826, 19.125978717727815],
+    [48.70600146236024, 19.125939103456957],
+    [48.70532534005782, 19.126226090224485],
+    [48.70540194701049, 19.126560738435764],
+    [48.70544227778234, 19.126769704223854],
+    [48.70545287109658, 19.12703408835206],
+    [48.70543652373173, 19.127288853869373],
+    [48.705410618250205, 19.127414511222888],
+    [48.70519509215006, 19.12831007888121],
+    [48.704437296437455, 19.127931521310863],
+    [48.70303114913214, 19.12769443474284],
+    [48.70254067185543, 19.127703074064883],
+    [48.702503474157446, 19.12766148683395],
+    [48.702147213036184, 19.127660739751278],
+    [48.70194739201027, 19.127716013230415],
+    [48.70142345204662, 19.127712033458646],
+    [48.70113559797762, 19.127672665889527],
+    [48.70085651847013, 19.127607012923292],
+    [48.70026734445006, 19.127484339163107],
+    [48.69983063725939, 19.127359347693837],
+    [48.698557830073874, 19.12715554946888],
+    [48.6981064237646, 19.12731383412582],
+    [48.69791700493221, 19.12751500721101],
+    [48.69788160921786, 19.127214570439236],
+    [48.69787633009633, 19.126667413393672],
+    [48.69782837795986, 19.126350335454763],
+    [48.69772574436192, 19.125918542066668],
+    [48.697650847167886, 19.12585550775476],
+    [48.6971635693616, 19.126090032116878],
+    [48.69661827740822, 19.126395789782084],
+    [48.695825604950535, 19.126687134990817],
+    [48.6948323030006, 19.12706524572856],
+    [48.69478304994098, 19.12701134337754],
+    [48.69461844172891, 19.12683697281097],
+    [48.69433335555394, 19.126772586303662],
+    [48.69422890578174, 19.12674035634905],
+    [48.69338969111959, 19.126040332332835],
+    [48.69313123861039, 19.12587940597664],
+    [48.692851532736576, 19.125774849515977],
+    [48.692769281077325, 19.12569196651455],
+    [48.69269439979301, 19.12557388236672],
+    [48.692568478197494, 19.125525256787245],
+    [48.692140667252445, 19.126063920211134],
+    [48.69182019871358, 19.126407242951576],
+    [48.6916114419791, 19.126476498823287],
+    [48.691273377268026, 19.12868820941937],
+    [48.69028198581887, 19.128124732028066],
+    [48.6898287091192, 19.12808181668551],
+    [48.688748605172876, 19.128377435113755],
+    [48.68805969971786, 19.128397983260466],
+    [48.68751410124165, 19.12822860645144],
+    [48.686308586368796, 19.12737399467947],
+    [48.68574530738376, 19.127054452824105],
+    [48.68470779939808, 19.126670615845995],
+    [48.68404905086031, 19.126654505832853],
+    [48.682350432383515, 19.127119298215703],
+    [48.67820633448665, 19.12706565232858],
+    [48.67740303620017, 19.126679414232118],
+    [48.676956600861566, 19.12650090418626],
+    [48.676483244722554, 19.12640054196727],
+    [48.67588365389523, 19.126548695738435],
+    [48.67589943269225, 19.126520020821072],
+    [48.67477773831909, 19.126908491246063],
+    [48.674143488374376, 19.12717561119437],
+    [48.67308034777935, 19.127137476575193],
+    [48.67291050334281, 19.12630559066029],
+    [48.67253896662411, 19.126418116286263],
+    [48.67203473386188, 19.126659242638407],
+    [48.671029284318564, 19.126602268462264],
+    [48.66965698750153, 19.12661634769453],
+    [48.66948693958758, 19.127083052054914],
+    [48.66913267129055, 19.127099145308375],
+    [48.66924603741658, 19.127372730617168],
+    [48.669773895102324, 19.12765704481545],
+    [48.67092170074012, 19.129411209442406],
+    [48.67110109977523, 19.12935756844954],
+    [48.67092170074012, 19.129411209442406],
+    [48.669773895102324, 19.12765704481545],
+    [48.66924603741658, 19.127372730617168],
+    [48.66920844237777, 19.127294657265146],
+    [48.66761432513137, 19.127554230065854],
+    [48.66639706725631, 19.12760322274996],
+    [48.664698862139986, 19.12750697217378]
+];
+
+L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
+
+// marker 1
+var marker1 = L.marker([48.69161401629059, 19.12646993334976], {icon: redIcon}).addTo(map);
+marker1.on('click', function() {
+    openBox(`
+        <h2>Pamätník obetiam fašizmu</h2>
+        <p>Popis miesta.</p>
+        <audio controls style="width:100%">
+            <source src="audio.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 2
+var marker2 = L.marker([48.67110109977523, 19.12935756844954], {icon: redIcon}).addTo(map);
+marker2.on('click', function() {
+    openBox(`
+        <h2>Pamätník 2. československej paradesantnej brigády</h2>
+        <p>Popis miesta.</p>
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 3
+var marker3 = L.marker([48.62808734572815, 19.117150550638645], {icon: redIcon}).addTo(map);
+marker3.on('click', function() {
+    openBox(`
+        <h2>Zhavarované lietadlo</h2>
+        <p>Blablabla.</p>
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 4
+var marker4 = L.marker([48.73510848507496, 19.14959797149057], {icon: redIcon}).addTo(map);
+marker4.on('click', function() {
+    openBox(`
+        <h2>Pamätník SNP</h2>
+        <p>Blablala.</p>
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 5
+var marker5 = L.marker([48.63282163507519, 19.14237941445688], {icon: redIcon}).addTo(map);
+marker5.on('click', function() {
+    openBox(`
+        <h2>Letisko 3 duby</h2>
+        <p>Blablalhha.</p>
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+
+</script>
+
+</body>
+</html>
