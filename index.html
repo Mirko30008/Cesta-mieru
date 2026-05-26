@@ -576,12 +576,18 @@ function toggleOther() {
     if (otherMarkers.length === 0) {
 
         var o1 = L.marker([48.66301464330536, 19.12576898409471], {icon: orangeIcon}).addTo(map);
-        o1.bindPopup("Iná zastávka 1");
+        o1.bindPopup("Pomník");
 
         var o2 = L.marker([48.66483285578452, 19.122653352513407], {icon: orangeIcon}).addTo(map);
         o2.bindPopup("Pomník SNP");
 
-        otherMarkers.push(o1, o2);
+        var o3 = L.marker([48.667654291639266, 19.123938615541565], {icon: orangeIcon}).addTo(map);
+        o3.bindPopup("Pamiatka obetiam 2. svetovej vojny");
+
+        var o4 = L.marker([48.66380578890151, 19.132807236750843], {icon: orangeIcon}).addTo(map);
+        o4.bindPopup("Pamätník");
+
+        otherMarkers.push(o1, o2, o3, o4);
 
         btn.classList.add("activeItem");
 
@@ -825,8 +831,12 @@ document.getElementById("infoBox").addEventListener("click", function(e) {
 
 var galleryImages = [
     'Logo mapa.png',
-    'img2.jpg',
-    'img3.jpg'
+    'Pamatnik_1.jpeg',
+    'Pamatnik_2.jpeg',
+    'Pamatnik_3.jpeg',
+    'Pamatnik_4.jpeg',
+    'Pamatnik_5.jpeg',
+    'Pamatnik_6.jpeg'
 ];
 
 var currentIndex = 0;
