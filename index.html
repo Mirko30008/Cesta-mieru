@@ -1066,9 +1066,7 @@ var newRoute = [
     [48.66920844237777, 19.127294657265146],
     [48.66761432513137, 19.127554230065854],
     [48.66639706725631, 19.12760322274996],
-    [48.664698862139986, 19.12750697217378],
-    [48.66487734914119, 19.127507433956914],
-    [48.66467015172494, 19.127572810250868],
+    [48.66483585637494, 19.127516786849956],
     [48.6647431819934, 19.127832503239613],
     [48.66470728629082, 19.12812555860016],
     [48.6645124324677, 19.129013410970455],
@@ -1148,10 +1146,23 @@ var newRoute = [
     [48.66227275039941, 19.126258589274414],
     [48.662851578103805, 19.126533407049873],
     [48.66322554843661, 19.126653180588395],
-    [48.66358751553627, 19.126819483876993]
+    [48.663513884235115, 19.12676590510826],
+    [48.66355607644403, 19.12610709249816],
+    [48.663160009193916, 19.12574665618127],
+    [48.66301464330536, 19.12576898409471]
 ];
 
 L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
+
+// --- Trasa na pamätník ---
+var newRoute = [
+    [48.667501812876665, 19.139057327246654],
+    [48.66745176415261, 19.13894209315172],
+    [48.667356431382856, 19.138983819256865],
+];
+    
+L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
+
 
 // marker 1
 var marker1 = L.marker([48.69161401629059, 19.12646993334976], {icon: redIcon}).addTo(map);
@@ -1198,11 +1209,20 @@ vojakom, ktorí bojovali za oslobodenie Československa.<br>
 });
 
 // marker 3
-var marker3 = L.marker([48.62808734572815, 19.117150550638645], {icon: redIcon}).addTo(map);
+var marker3 = L.marker([48.667356431382856, 19.138983819256865], {icon: redIcon}).addTo(map);
 marker3.on('click', function() {
     openBox(`
-        <h2>Zhavarované lietadlo</h2>
-        <p>Blablabla.</p>
+                <h2 class="popupTitle">Pamätník bojovníkov za oslobodenie Slovenska</h2>
+        
+        <p class="popupText">
+            Pamätník pripomína kritické boje o Slovensko v roku 1919, keď československé legionárske jednotky
+chránili nový štát pred maďarskými agresormi.<br>
+            Dnes pripomína odvahu legionárov, ktorí bojovali za slobodu a suverenitu Slovenska.
+        </p>
+
+        <p class="popupSmall">
+            Návrh monumentu vypracoval prof. A. Hrdlička
+        </p>
         <audio controls style="width:100%">
             <source src="audio2.mp3" type="audio/mpeg">
         </audio>
@@ -1222,7 +1242,7 @@ marker4.on('click', function() {
 });
 
 // marker 5
-var marker5 = L.marker([48.62823930366861, 19.141241451101777], {icon: redIcon}).addTo(map);
+var marker5 = L.marker([48.64099329886727, 19.140865260551124], {icon: redIcon}).addTo(map);
 marker5.on('click', function() {
     openBox(`
                 <h2 class="popupTitle">Letisko Tri Duby</h2>
