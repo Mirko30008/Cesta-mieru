@@ -66,7 +66,7 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 70px; /* výška hornej lišty */
+    height: 70px;
     margin-right: 10px;
     margin-left: -27px;
 }
@@ -82,14 +82,14 @@ html, body {
 }
 
 #topBar.dimmed {
-    background: #403600; /* tmavšie žltá, podobná menu */
+    background: #403600;
     transition: background 0.3s ease;
 }
 
 #topBar.dimmed .title,
 #topBar.dimmed .logo img,
 #topBar.dimmed #menuButton {
-    filter: brightness(0.6); /* stmavenie textu, loga a hamburgeru */
+    filter: brightness(0.6);
     transition: filter 0.3s ease;
 }
 
@@ -114,15 +114,15 @@ html, body {
     z-index: 9998;
     font-family: Arial, sans-serif;
     color: white;
-    overflow-y: auto;   /* umožní scroll */
-    overflow-x: hidden; /* zabráni horizontálnemu scrollu */
+    overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    -ms-overflow-style: none;  /* Internet Explorer */
-    scrollbar-width: none;     /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 #sideMenu::-webkit-scrollbar {
-    display: none;             /* Chrome, Safari */
+    display: none;
 }
 
 #sideMenu.open {
@@ -143,7 +143,7 @@ html, body {
 }
 
 .menuItem {
-    user-select: none; /* zakáže výber textu */
+    user-select: none;
 }
 
 .activeItem {
@@ -243,7 +243,7 @@ html, body {
   to {opacity: 1; transform: scale(1);}
 }
 
-/* ================= GPS PULZUJÚCA BODKA ================= */
+/* GPS PULZUJÚCA BODKA */
 
 .pulseDot {
     width: 18px;
@@ -330,11 +330,11 @@ html, body {
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 99999; /* nad mapou a všetkým */
+    z-index: 99999;
 }
 
 .galleryContent {
-    position: relative; /* veľmi dôležité, šípky budú relatívne k containeru */
+    position: relative;
     max-width: 90%;
     max-height: 90%;
     display: flex;
@@ -356,11 +356,11 @@ html, body {
 #galleryImage {
     max-width: 100%;
     max-height: 100%;
-    z-index: 1; /* obrázok je pod šípkami */
+    z-index: 1;
 }
 
 .imageWrapper {
-    position: relative;   /* šípky budú relatívne k obrázku */
+    position: relative;
     display: inline-block; 
     max-width: 100%;
 }
@@ -398,14 +398,14 @@ html, body {
 
 /* KRÍŽIK PRE GALÉRIU */
 #closeGallery {
-    position: absolute; /* musí byť absolute */
+    position: absolute;
     top: 20px;
     right: 35px;
     font-size: 48px;
-    color: white;       /* aby bol viditeľný */
+    color: white;
     cursor: pointer;
     font-weight: bold;
-    z-index: 10001;     /* nad všetkým */
+    z-index: 10001;
     background: none;
     padding: 0;
     user-select: none;
@@ -609,8 +609,8 @@ document.getElementById("menuLogo").addEventListener("click", openLogo);
 var southWest = L.latLng(48.55, 19.00);
 var northEast = L.latLng(48.80, 19.30);
 var slovakiaBounds = [
-    [47.70, 16.80],  // juhozápad
-    [49.65, 22.60]   // severovýchod
+    [47.70, 16.80], 
+    [49.65, 22.60] 
 ];
 
 var badin = [48.687253771772355, 19.14468995239919];
@@ -621,7 +621,7 @@ var map = L.map('map', {
     maxBounds: slovakiaBounds,
     maxBoundsViscosity: 1.0,
     minZoom: 6,
-    maxZoom: 18,   // ← TU CHÝBALA ČIARKA
+    maxZoom: 18,
     zoomControl: false,
     tap: false,
     touchZoom: true,
@@ -672,12 +672,12 @@ var satellite = L.tileLayer(
   }
 );
 
-// Zatvor všetky popupy, keď sa začne posúvať mapa
+// Zatvorí všetky popupy, keď sa začne posúvať mapa
 map.on('movestart', function() {
     map.closePopup();
 });
 
-// Zatvor popupy aj keď klikneš inde
+// Zatvorí popupy aj keď klikneš inde
 map.on('click', function() {
     map.closePopup();
     document.getElementById("sideMenu").classList.remove("open");
@@ -696,8 +696,8 @@ L.control.scale({
 }).addTo(map);
 
 // GPS bod
-var tracking = false;       // sleduje či je GPS zapnuté
-var initialCenter = true;   // prvé nastavenie mapy na polohu
+var tracking = false;
+var initialCenter = true;
 
 document.getElementById("locateBtn").addEventListener("click", function() {
 
@@ -732,7 +732,7 @@ document.getElementById("locateBtn").addEventListener("click", function() {
         }
 
         document.getElementById("accuracyText").style.display = "none";
-        initialCenter = true; // reset pre ďalšie zapnutie GPS
+        initialCenter = true;
     }
 });
 
@@ -746,14 +746,14 @@ map.on('locationfound', function(e) {
     });
 
     if (window.userMarker) {
-        window.userMarker.setLatLng(e.latlng);  // posúvanie markeru
+        window.userMarker.setLatLng(e.latlng);
     } else {
         window.userMarker = L.marker(e.latlng, {icon: pulseIcon}).addTo(map);
     }
 
     // prvé nastavenie mapy na polohu
     if (initialCenter) {
-        map.setView(e.latlng, 16);  // iba pri zapnutí GPS
+        map.setView(e.latlng, 16);
         initialCenter = false;
     }
 
@@ -783,12 +783,12 @@ map.on('movestart', function() {
 function openBox(htmlContent) {
     document.getElementById("infoContent").innerHTML = htmlContent;
     document.getElementById("infoBox").style.display = "flex";
-    document.getElementById("topBar").classList.add("dimmed"); // stmavenie horného panelu
+    document.getElementById("topBar").classList.add("dimmed");
 }
 
 function closeBox() {
     document.getElementById("infoBox").style.display = "none";
-    document.getElementById("topBar").classList.remove("dimmed"); // návrat späť
+    document.getElementById("topBar").classList.remove("dimmed");
 }
 
 // klik mimo
@@ -1067,18 +1067,7 @@ var newRoute = [
     [48.66761432513137, 19.127554230065854],
     [48.66639706725631, 19.12760322274996],
     [48.664698862139986, 19.12750697217378],
-    [48.66458738815255, 19.127461051225037],
-    [48.66417666033114, 19.127355173636513],
-    [48.66409216168901, 19.127317576666353],
-    [48.66371578891243, 19.126984394895295],
-    [48.66362592771949, 19.12686836254872],
-    [48.6628618345737, 19.125808463421205],
-    [48.663152835172994, 19.125755209548423],
-    [48.66323861889422, 19.12583151452168],
-    [48.663587593312535, 19.126164093704958],
-    [48.66356102506133, 19.126705906020995],
-    [48.663743363714204, 19.127121279890662],
-    [48.66415111906585, 19.127438665580343],
+    [48.66487734914119, 19.127507433956914],
     [48.66467015172494, 19.127572810250868],
     [48.6647431819934, 19.127832503239613],
     [48.66470728629082, 19.12812555860016],
