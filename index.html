@@ -438,8 +438,8 @@ html, body {
     <h2>Iné zastávky</h2>
     <div class="menuItem" id="foodBtn" onclick="toggleFood()">Občerstvenie</div>
     <div class="menuItem" id="springBtn" onclick="toggleSprings()">Minerálne pramene</div>
+    <div class="menuItem" id="otherBtn" onclick="toggleOther()">Iné zastávky</div>
     <h2>Ďalšie informácie</h2>
-    <div class="menuItem" id="aboutUs">O nás</div>
     <div class="menuItem" id="galleryBtn">Galéria</div>
 
     <!-- Logo ako posledné pred textom -->
@@ -499,19 +499,6 @@ document.getElementById("menuButton").addEventListener("click", function() {
     document.getElementById("sideMenu").classList.toggle("open");
 });
 
-// --- O NÁS ---
-document.getElementById("aboutUs").addEventListener("click", function() {
-    openBox(`
-        <h2>O nás</h2>
-        <p>Dám tu niečo o triede</p>
-        <ul>
-            <li>?</li>
-            <li>?</li>
-            <li>?</li>
-        </ul>
-    `);
-});
-
 // POPIS CYKLOTRASY
 function showRouteDescription() {
     openBox(`
@@ -526,6 +513,7 @@ function showRouteDescription() {
 // SKUPINY MARKEROV
 var foodMarkers = [];
 var springMarkers = [];
+var otherMarkers = [];
 
 
 // OBČERSTVENIE
@@ -537,8 +525,8 @@ function toggleFood() {
         var m1 = L.marker([48.73486606759005, 19.147754374744412], {icon: greenIcon}).addTo(map);
         m1.bindPopup("Reštaurácia Magnoli");
         var m2 = L.marker([48.73499859937092, 19.14394986264506], {icon: greenIcon}).addTo(map);
-        m2.bindPopup("Červený Rak");
-        var m3 = L.marker([48.677460322051935, 19.144081146614848], {icon: greenIcon}).addTo(map);
+        m2.bindPopup("Rak Bar");
+        var m3 = L.marker([48.68487716403098, 19.127027286308735], {icon: greenIcon}).addTo(map);
         m3.bindPopup("Fort Geronimo");
         var m4 = L.marker([48.62803493840789, 19.14117769279621], {icon: greenIcon}).addTo(map);
         m4.bindPopup("Bufet Rybárik");
@@ -576,6 +564,35 @@ function toggleSprings() {
             map.removeLayer(s);
         });
         springMarkers = [];
+        btn.classList.remove("activeItem");
+    }
+}
+
+// INÉ ZASTÁVKY
+function toggleOther() {
+
+    var btn = document.getElementById("otherBtn");
+
+    if (otherMarkers.length === 0) {
+
+        var o1 = L.marker([48.66301464330536, 19.12576898409471], {icon: orangeIcon}).addTo(map);
+        o1.bindPopup("Iná zastávka 1");
+
+        var o2 = L.marker([48.66483285578452, 19.122653352513407], {icon: orangeIcon}).addTo(map);
+        o2.bindPopup("Pomník SNP");
+
+        otherMarkers.push(o1, o2);
+
+        btn.classList.add("activeItem");
+
+    } else {
+
+        otherMarkers.forEach(m => {
+            map.removeLayer(m);
+        });
+
+        otherMarkers = [];
+
         btn.classList.remove("activeItem");
     }
 }
@@ -655,6 +672,16 @@ var greenIcon = new L.Icon({
 // MODRÁ – minerálne pramene
 var blueIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+// ORANŽOVÁ – iné zastávky
+var orangeIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
@@ -1156,9 +1183,10 @@ L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
 
 // --- Trasa na pamätník ---
 var newRoute = [
+    [48.666182179223135, 19.139696779585133],
     [48.667501812876665, 19.139057327246654],
     [48.66745176415261, 19.13894209315172],
-    [48.667356431382856, 19.138983819256865],
+    [48.667356431382856, 19.138983819256865]
 ];
     
 L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
