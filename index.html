@@ -347,17 +347,24 @@ html, body {
 
 
 .galleryContent img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 90vw;
+    max-height: 85vh;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+
     border-radius: 10px;
 }
-
+    
 /* ŠÍPKY */
 #galleryImage {
     max-width: 100%;
     max-height: 100%;
     z-index: 1;
     pointer-events: none;
+    transition: opacity 0.15s ease;
 }
 
 .imageWrapper {
@@ -438,7 +445,6 @@ html, body {
     <div class="menuItem" onclick="showRouteDescription()">Popis cyklotrasy</div>
     <h2>Iné zastávky</h2>
     <div class="menuItem" id="foodBtn" onclick="toggleFood()">Občerstvenie</div>
-    <div class="menuItem" id="springBtn" onclick="toggleSprings()">Minerálne pramene</div>
     <div class="menuItem" id="otherBtn" onclick="toggleOther()">Iné zastávky</div>
     <h2>Ďalšie informácie</h2>
     <div class="menuItem" id="galleryBtn">Galéria</div>
@@ -505,7 +511,7 @@ function showRouteDescription() {
     openBox(`
         <h2>Popis cyklotrasy</h2>
         <p>
-        Bude tu opísaný terén, náročnosť, dostupnosť, atribúty...
+        Zatiaľ...
         </p>
     `);
 }
@@ -513,9 +519,6 @@ function showRouteDescription() {
 
 // SKUPINY MARKEROV
 var foodMarkers = [];
-var springMarkers = [];
-var otherMarkers = [];
-
 
 // OBČERSTVENIE
 function toggleFood() {
@@ -523,18 +526,10 @@ function toggleFood() {
 
     if (foodMarkers.length === 0) {
 
-        var m1 = L.marker([48.73486606759005, 19.147754374744412], {icon: greenIcon}).addTo(map);
-        m1.bindPopup("Reštaurácia Magnoli");
-        var m2 = L.marker([48.73499859937092, 19.14394986264506], {icon: greenIcon}).addTo(map);
-        m2.bindPopup("Rak Bar");
-        var m3 = L.marker([48.68487716403098, 19.127027286308735], {icon: greenIcon}).addTo(map);
-        m3.bindPopup("Fort Geronimo");
-        var m4 = L.marker([48.62803493840789, 19.14117769279621], {icon: greenIcon}).addTo(map);
-        m4.bindPopup("Bufet Rybárik");
-        var m5 = L.marker([48.66251339730666, 19.121365163748408], {icon: greenIcon}).addTo(map);
-        m5.bindPopup("Pizzéria u Krta");
+        var m1 = L.marker([48.73499859937092, 19.14394986264506], {icon: greenIcon}).addTo(map);
+        m1.bindPopup("Rak Bar");
 
-        foodMarkers.push(m1, m2, m3, m4, m5);
+        foodMarkers.push(m1);
         btn.classList.add("activeItem");
 
     } else {
@@ -542,64 +537,6 @@ function toggleFood() {
             map.removeLayer(m);
         });
         foodMarkers = [];
-        btn.classList.remove("activeItem");
-    }
-}
-
-// MINERÁLNE PRAMENE
-function toggleSprings() {
-    var btn = document.getElementById("springBtn");
-
-    if (springMarkers.length === 0) {
-
-        var s1 = L.marker([48.67, 19.13], {icon: blueIcon}).addTo(map);
-        s1.bindPopup("Minerálny prameň 1");
-        var s2 = L.marker([48.66, 19.15], {icon: blueIcon}).addTo(map);
-        s2.bindPopup("Minerálny prameň 2");
-
-        springMarkers.push(s1, s2);
-        btn.classList.add("activeItem");
-
-    } else {
-        springMarkers.forEach(s => {
-            map.removeLayer(s);
-        });
-        springMarkers = [];
-        btn.classList.remove("activeItem");
-    }
-}
-
-// INÉ ZASTÁVKY
-function toggleOther() {
-
-    var btn = document.getElementById("otherBtn");
-
-    if (otherMarkers.length === 0) {
-
-        var o1 = L.marker([48.66301464330536, 19.12576898409471], {icon: orangeIcon}).addTo(map);
-        o1.bindPopup("Pomník");
-
-        var o2 = L.marker([48.66483285578452, 19.122653352513407], {icon: orangeIcon}).addTo(map);
-        o2.bindPopup("Pomník SNP");
-
-        var o3 = L.marker([48.667654291639266, 19.123938615541565], {icon: orangeIcon}).addTo(map);
-        o3.bindPopup("Pamiatka obetiam 2. svetovej vojny");
-
-        var o4 = L.marker([48.66380578890151, 19.132807236750843], {icon: orangeIcon}).addTo(map);
-        o4.bindPopup("Pamätník");
-
-        otherMarkers.push(o1, o2, o3, o4);
-
-        btn.classList.add("activeItem");
-
-    } else {
-
-        otherMarkers.forEach(m => {
-            map.removeLayer(m);
-        });
-
-        otherMarkers = [];
-
         btn.classList.remove("activeItem");
     }
 }
@@ -669,26 +606,6 @@ var redIcon = new L.Icon({
 // ZELENÁ – občerstvenie
 var greenIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-});
-
-// MODRÁ – minerálne pramene
-var blueIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-});
-
-// ORANŽOVÁ – iné zastávky
-var orangeIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
@@ -839,6 +756,11 @@ var galleryImages = [
     'Pamatnik_5.jpeg',
     'Pamatnik_6.jpeg'
 ];
+
+galleryImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+});
 
 var currentIndex = 0;
 var galleryOverlay = document.getElementById('galleryOverlay');
@@ -1212,8 +1134,7 @@ marker1.on('click', function() {
         <p class="popupText">
             Pamätník v Kremničke je miesto pri Banskej Bystrici, kde počas druhej svetovej vojny vojaci a gardisti 
 zabili veľa nevinných ľudí. Boli to hlavne Židia, Rómovia a ľudia, ktorí bojovali proti vtedajšiemu režimu počas SNP.<br>
-            Dnes sa tam nachádza pamätník, ktorý pripomína obete týchto udalostí. Sú tam masové hroby a pamätné tabule s menami 
-obetí. Ľudia tam chodia spomínať a uctiť si pamiatku tých, ktorí tam prišli o život.<br>
+            Dnes sa tam nachádza pamätník, ktorý pripomína obete týchto udalostí. Sú tam masové hroby a pamätné tabule s menami obetí.<br>
             Tento pamätník nám pripomína, že vojna prináša veľa utrpenia a že by sme si mali vážiť mier a správať sa k sebe s úctou.
         </p>
 
@@ -1295,6 +1216,95 @@ a odvtedy ho využíva už len armáda.​
 
         <p class="popupSmall">
             Letisko má jednu vzletovaciu a pristávaciu dráhu dlhú 2 400 m
+        </p>
+        
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 6
+var marker6 = L.marker([48.66301464330536, 19.12576898409471], {icon: redIcon}).addTo(map);
+marker6.on('click', function() {
+    openBox(`
+                <h2 class="popupTitle">Pamätná tabuľa II. čs. samostatnej paradesantnej brigády v SSSR</h2>
+        
+        <p class="popupText">
+            V tejto obci v dobe Slovenského národného povstania v októbri 1944 bola umiestnená II. čs. samostatná paradesantná brigáda v SSSR.<br>
+            Venované z príležitosti 20. výročia SNP stretnutia príslušníkov brigády.
+        </p>
+
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 7
+var marker7 = L.marker([48.66483285578452, 19.122653352513407], {icon: redIcon}).addTo(map);
+marker7.on('click', function() {
+    openBox(`
+                <h2 class="popupTitle">Pomník SNP</h2>
+        
+        <p class="popupText">
+            Pamätník v obci Badín pripomína miestnych obyvateľov, ktorí zahynuli počas prvej svetovej vojny v rokoch 1914 – 1918.<br>
+            Medzi padlými hrdinami sú uvedení členovia rodiny Leštákovej, Bahylovej, Hricovej, Moravčíkovej či Pleškovej.
+            Spodná časť ľavej tabule navyše pripomína tragický rok 1942.
+        </p>
+        
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 8
+var marker8 = L.marker([48.667654291639266, 19.123938615541565], {icon: redIcon}).addTo(map);
+marker8.on('click', function() {
+    openBox(`
+                <h2 class="popupTitle">Pamiatka obetiam 2. svetovej vojny</h2>
+        
+        <p class="popupText">
+        Mená obetí druhej svetovej vojny z obce Badín.<br>
+        Tragický osud postihol členov rodiny Bahylových, Bolfových, Pleškových a ďalších miestnych obyvateľov.
+        </p>
+        
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 9
+var marker9 = L.marker([48.66380578890151, 19.132807236750843], {icon: redIcon}).addTo(map);
+marker9.on('click', function() {
+    openBox(`
+                <h2 class="popupTitle">Plastika k 35. výročiu SNP</h2>
+        
+        <p class="popupText">
+           Betónové plastiky pod obcou Badín pri ceste E 77 boli odhalené v roku 1981.
+Dielo vzniklo k 35. výročiu SNP ako súčasť vtedajšej výstavby rýchlostnej cesty.
+Tieto zachovalé reliéfy reprezentujú socialistické umenie s ideologickými symbolmi normalizácie.​ 
+        </p>
+
+        <p class="popupSmall">
+            Vytvoril v roku 1981 sochár Mikuláš Palko
+        </p>
+        <audio controls style="width:100%">
+            <source src="audio2.mp3" type="audio/mpeg">
+        </audio>
+    `);
+});
+
+// marker 10
+var marker10 = L.marker([48.70244823096823, 19.040979172555627], {icon: redIcon}).addTo(map);
+marker10.on('click', function() {
+    openBox(`
+                <h2 class="popupTitle">Pamätník Sovietskych letcov, Lisunov</h2>
+        
+        <p class="popupText">
+            Na tomto mieste roku 1944 stroskotalo sovietske lietadlo so 6 parašutistami, ktorí išli na pomoc SNP.
         </p>
         <audio controls style="width:100%">
             <source src="audio2.mp3" type="audio/mpeg">
