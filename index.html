@@ -335,14 +335,15 @@ html, body {
 
 .galleryContent {
     position: relative;
-    max-width: 90%;
-    max-height: 90%;
+
+    max-width: 90vw;
+    max-height: 90vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0,0,0,0.9);
-    padding: 20px;
-    border-radius: 15px;
+
+    overflow: hidden;
 }
 
 
@@ -360,11 +361,16 @@ html, body {
     
 /* ŠÍPKY */
 #galleryImage {
-    max-width: 100%;
-    max-height: 100%;
+    width: auto;
+    height: auto;
+
+    max-width: 85vw;
+    max-height: 80vh;
+
+    object-fit: contain;
+
     z-index: 1;
     pointer-events: none;
-    transition: opacity 0.15s ease;
 }
 
 .imageWrapper {
@@ -445,7 +451,6 @@ html, body {
     <div class="menuItem" onclick="showRouteDescription()">Popis cyklotrasy</div>
     <h2>Iné zastávky</h2>
     <div class="menuItem" id="foodBtn" onclick="toggleFood()">Občerstvenie</div>
-    <div class="menuItem" id="otherBtn" onclick="toggleOther()">Iné zastávky</div>
     <h2>Ďalšie informácie</h2>
     <div class="menuItem" id="galleryBtn">Galéria</div>
 
@@ -526,7 +531,7 @@ function toggleFood() {
 
     if (foodMarkers.length === 0) {
 
-        var m1 = L.marker([48.73499859937092, 19.14394986264506], {icon: greenIcon}).addTo(map);
+        var m1 = L.marker([48.684775612376235, 19.127055088266662], {icon: greenIcon}).addTo(map);
         m1.bindPopup("Rak Bar");
 
         foodMarkers.push(m1);
