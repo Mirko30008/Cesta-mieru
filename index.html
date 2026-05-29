@@ -541,12 +541,22 @@ document.getElementById("menuButton").addEventListener("click", function() {
 // POPIS CYKLOTRASY
 function showRouteDescription() {
     openBox(`
-        <h2>Popis cyklotrasy</h2>
-        <p>
-        Zatiaľ...
+        <h2 class="popupTitle">Cesta mieru</h2>
+        
+        <p class="popupText">
+Cyklotrasa Cesta mieru predstavuje ideálne spojenie športového vyžitia a spoznávania regionálnej histórie v okolí Banskej Bystrice. 
+Táto približne 23 kilometrov dlhá trasa vás prevedie prostredím, ktoré spája krajské mesto s okolitými obcami Kremnička, Badín a Rakytovce.<br>
+Terén je rovinatý až mierne zvlnený, vďaka čomu je jazda plynulá a vhodná pre rodiny s deťmi aj rekreačných cyklistov na horských či trekingových bicykloch. 
+Hlavným motívom celej cesty je pripomienka historických udalostí, o čom svedčí celkovo 10 pamätníkov rozmiestnených priamo na trase, 
+ktoré ponúkajú priestor na krátke zastavenie a tiché zamyslenie.
+        </p>
+        
+        <p class="popupSmall">
+            Bonusovým bodom je Pamätník Sovietskych letcov. Nachádza sa hlboko a ďaleko v lesnom teréne nad obcou Badín. 
+Jeho dominantou sú pozostatky a torzo havarovaného lietadla Lisunov.
         </p>
     `);
-}
+});
 
 
 // SKUPINY MARKEROV
@@ -753,7 +763,7 @@ map.on('locationerror', function() {
 });
 
 
-// Pridáme zatváranie menu klikom na mapu
+// Pridám zatváranie menu klikom na mapu
 map.on('click', function() {
     document.getElementById("sideMenu").classList.remove("open");
 });
