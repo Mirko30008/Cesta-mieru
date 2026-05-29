@@ -406,7 +406,6 @@ html, body {
 
     z-index: 10;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
 }
 
 #prevImage {
@@ -453,6 +452,10 @@ html, body {
 #closeGallery:hover {
     transform: scale(1.2);
     opacity: 0.8;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
 }
 
 </style>
@@ -814,9 +817,14 @@ closeGallery.addEventListener('click', function() {
 });
 
 galleryOverlay.addEventListener('click', function(e) {
-    if (e.target === galleryOverlay) {
+
+    if (
+        e.target === galleryOverlay ||
+        e.target === document.querySelector('.galleryContent')
+    ) {
         galleryOverlay.style.display = 'none';
     }
+
 });
 
 prevBtn.addEventListener('click', function(e) {
