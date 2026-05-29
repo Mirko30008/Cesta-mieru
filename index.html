@@ -1234,8 +1234,16 @@ chránili nový štát pred maďarskými agresormi.<br>
 var marker4 = L.marker([48.73510848507496, 19.14959797149057], {icon: redIcon}).addTo(map);
 marker4.on('click', function() {
     openBox(`
-        <h2>Pamätník SNP</h2>
-        <p>Blablala.</p>
+        <h2 class="popupTitle">Pamätník SNP</h2>
+        
+        <p class="popupText">
+            Pamätník SNP v Banskej Bystrici je jeden z najvýznamnejších pamätníkov na Slovensku,
+            ktorých úlohou je pripomínať obdobie II. svetovej vojny a SNP, centrom ktorého bola Banská Bystrica.
+        </p>
+
+        <p class="popupSmall">
+            Pamätník bol navrhnutý architektom Dušanom Kuzmom a dokončený v roku 1969.
+        </p>
         <audio controls style="width:100%">
             <source src="audio2.mp3" type="audio/mpeg">
         </audio>
