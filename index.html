@@ -1181,6 +1181,20 @@ var newRoute = [
   
 L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
 
+// --- Trasa na Plastika k 35. výročiu SNP ---
+var newRoute = [
+    [48.66544848922187, 19.135883243974646],
+    [48.66508383320047, 19.135991370855717],
+    [48.66465533269792, 19.136212235144587],
+    [48.664503989083286, 19.13551651263453],
+    [48.664279707970884, 19.135187977004833],
+    [48.66408402059319, 19.134182089377383],
+    [48.66380578890151, 19.132807236750843]
+    
+];
+  
+L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
+
 // marker 1
 var marker1 = L.marker([48.69161401629059, 19.12646993334976], {icon: redIcon}).addTo(map);
 marker1.on('click', function() {
