@@ -1151,21 +1151,35 @@ var newRoute = [
     [48.663513884235115, 19.12676590510826],
     [48.66355607644403, 19.12610709249816],
     [48.663160009193916, 19.12574665618127],
-    [48.66301464330536, 19.12576898409471]
+    [48.66301464330536, 19.12576898409471],
+    [48.663160009193916, 19.12574665618127],
+    [48.66355607644403, 19.12610709249816],
+    [48.66355607644403, 19.12610709249816],
+    [48.663821229178474, 19.12531614966734],
+    [48.66457756971483, 19.123431270926837],
+    [48.6649106120864, 19.12274462544595],
+    [48.66483285578452, 19.122653352513407],
+    [48.66506364981128, 19.122567073554592],
+    [48.66534364037762, 19.122024000956408],
+    [48.665626326397, 19.121404904003626],
+    [48.66602006501157, 19.121253951304794],
+    [48.667160915171415, 19.12175613667424],
+    [48.66773394293059, 19.12187182476497],
+    [48.66736465912122, 19.12391564770121],
+    [48.667654291639266, 19.123938615541565]
 ];
 
 L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
 
-// --- Trasa na pamätník ---
+// --- Trasa na Pamätník 2. československej paradesantnej brigády ---
 var newRoute = [
     [48.666182179223135, 19.139696779585133],
     [48.667501812876665, 19.139057327246654],
     [48.66745176415261, 19.13894209315172],
     [48.667356431382856, 19.138983819256865]
 ];
-    
+  
 L.polyline(newRoute, {color: 'yellow', weight: 5}).addTo(map);
-
 
 // marker 1
 var marker1 = L.marker([48.69161401629059, 19.12646993334976], {icon: redIcon}).addTo(map);
@@ -1182,12 +1196,9 @@ zabili veľa nevinných ľudí. Boli to hlavne Židia, Rómovia a ľudia, ktorí
         <p class="popupSmall">
             Pamätník bol postavený v roku v 1949 architektom D. Jurkovičom
         </p>
-        <audio controls style="width:100%">
-            <source src="Pamatnik_v_kremnicke.mp3" type="audio/mpeg">
-        </audio>
         
         <audio controls style="width:100%">
-            <source src="Pamatnik_v_kremnicke_ENG.mp3" type="audio/mpeg">
+            <source src="Pamatnik_v_kremnicke.mp3" type="audio/mpeg">
         </audio>
     `);
 });
@@ -1250,6 +1261,7 @@ marker4.on('click', function() {
         <p class="popupSmall">
             Pamätník bol navrhnutý architektom Dušanom Kuzmom a dokončený v roku 1969.
         </p>
+        
         <audio controls style="width:100%">
             <source src="Pamatnik_SNP.mp3" type="audio/mpeg">
         </audio>
@@ -1350,6 +1362,7 @@ marker10.on('click', function() {
         <p class="popupText">
             Na tomto mieste roku 1944 stroskotalo sovietske lietadlo so 6 parašutistami, ktorí išli na pomoc SNP.
         </p>
+        
         <audio controls style="width:100%">
             <source src="Lietadlo.mp3" type="audio/mpeg">
         </audio>
