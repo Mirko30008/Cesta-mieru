@@ -334,8 +334,8 @@ html, body {
 .galleryContent {
     position: relative;
 
-    max-width: 90vw;
-    max-height: 90vh;
+    width: 100vw;
+    height: 100vh;
 
     display: flex;
     justify-content: center;
@@ -359,12 +359,16 @@ html, body {
     
 /* ŠÍPKY */
 #galleryImage {
-    object-fit: contain;
-
     max-width: 80vh;
     max-height: 80vw;
 
+    object-fit: contain;
+
+    border-radius: 12px;
+
     transform: rotate(90deg);
+
+    display: block;
 }
 
 .imageWrapper {
@@ -380,22 +384,37 @@ html, body {
     border-radius: 10px;
 }
 
-#prevImage, #nextImage {
+#prevImage,
+#nextImage {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 50px;
+
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 38px;
     color: white;
-    cursor: pointer;
-    z-index: 10;
-    background: rgba(0,0,0,0.3);
-    padding: 10px;
+
+    background: rgba(0,0,0,0.45);
+
     border-radius: 50%;
-    user-select: none;
+
+    z-index: 10;
+    cursor: pointer;
 }
 
-#prevImage { left: 5px; }
-#nextImage { right: 5px; }
+#prevImage {
+    left: 20px;
+}
+
+#nextImage {
+    right: 20px;
+}
 
 @media (max-width: 768px) {
     #prevImage, #nextImage {
@@ -407,17 +426,27 @@ html, body {
 /* KRÍŽIK PRE GALÉRIU */
 #closeGallery {
     position: absolute;
+
     top: 20px;
-    right: 35px;
-    font-size: 48px;
+    right: 20px;
+
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 32px;
+
     color: white;
+
+    background: rgba(0,0,0,0.45);
+
+    border-radius: 50%;
+
+    z-index: 11;
     cursor: pointer;
-    font-weight: bold;
-    z-index: 10001;
-    background: none;
-    padding: 0;
-    user-select: none;
-    transition: 0.2s;
 }
 
 #closeGallery:hover {
