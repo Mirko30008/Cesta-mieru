@@ -793,6 +793,12 @@ function openBox(htmlContent) {
 }
 
 function closeBox() {
+
+    document.querySelectorAll("audio").forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+
     document.getElementById("infoBox").style.display = "none";
     document.getElementById("topBar").classList.remove("dimmed");
 }
