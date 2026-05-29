@@ -219,6 +219,7 @@ html, body {
   border-radius: 15px;
   box-shadow: 0 0 30px rgba(0,0,0,0.5);
   animation: fadeIn 0.3s ease;
+  position: relative;
 }
 
 .content img {
@@ -233,10 +234,23 @@ html, body {
 }
 
 .close {
-  cursor: pointer;
-  float: right;
-  font-size: 24px;
-  font-weight: bold;
+    position: sticky;
+    top: 0;
+
+    float: right;
+
+    font-size: 28px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    background: white;
+
+    padding: 5px 10px;
+
+    border-radius: 10px;
+
+    z-index: 10000;
 }
 
 @keyframes fadeIn {
