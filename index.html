@@ -359,16 +359,12 @@ html, body {
     
 /* ŠÍPKY */
 #galleryImage {
-    width: auto;
-    height: auto;
-
-    max-width: 85vw;
-    max-height: 80vh;
-
     object-fit: contain;
 
-    z-index: 1;
-    pointer-events: none;
+    max-width: 80vh;
+    max-height: 80vw;
+
+    transform: rotate(90deg);
 }
 
 .imageWrapper {
