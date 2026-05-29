@@ -74,7 +74,6 @@ html, body {
 #topBar .logo img {
     height: 65px;
     width: auto;
-    border-radius: 10px;
 }
 
 #topBar .title {
@@ -158,8 +157,7 @@ html, body {
     background: #FFD700;
     display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 15px; 
+    justify-content: center; 
     margin: 20px auto;
     overflow: hidden;
     overflow-y: auto;
@@ -753,17 +751,20 @@ document.getElementById("infoBox").addEventListener("click", function(e) {
 });
 
 var galleryImages = [
-    'Pamatnik_1.jpeg',
-    'Pamatnik_2.jpeg',
-    'Pamatnik_3.jpeg',
-    'Pamatnik_4.jpeg',
-    'Pamatnik_5.jpeg',
-    'Pamatnik_6.jpeg'
+    'Pamatnik_1.webp',
+    'Pamatnik_2.webp',
+    'Pamatnik_3.webp',
+    'Pamatnik_4.webp',
+    'Pamatnik_5.webp',
+    'Pamatnik_6.webp'
 ];
+
+const preloadedImages = [];
 
 galleryImages.forEach(src => {
     const img = new Image();
     img.src = src;
+    preloadedImages.push(img);
 });
 
 var currentIndex = 0;
@@ -773,9 +774,12 @@ var closeGallery = document.getElementById('closeGallery');
 var prevBtn = document.getElementById('prevImage');
 var nextBtn = document.getElementById('nextImage');
 
+prevBtn.style.touchAction = "manipulation";
+nextBtn.style.touchAction = "manipulation";
+
 document.getElementById('galleryBtn').addEventListener('click', function() {
     currentIndex = 0;
-    galleryImg.src = galleryImages[currentIndex];
+    galleryImg.src = preloadedImages[currentIndex].src;
     galleryOverlay.style.display = 'flex';
 });
 
